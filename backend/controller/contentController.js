@@ -1,51 +1,74 @@
-const axios = require("axios");
-const Course = require("../models/Course");
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+import { ai } from "./courseLayoutController.js";
+import Course from "./../models/Course.js";
+import axios from "axios";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
-// 🔥 Prompt Template
 const PROMPT = `
 Depends on Chapter name and Topic Generate content for each topic in HTML 
 
 and give response in JSON format. 
 
-Schema: {
-
-chapterName:<>, 
-
-{ topic:<>, content:<> } 
-
+Schema:{
+  chapterName: <>,
+  {
+    topic: <>,
+    content: <>
+  }
 }
 
 : User Input:
 `;
 
-exports.generateCourseContent = async (req, res) => {
+export const generateCourseContent = async (req, res) => {
   try {
-    const { courseJson, courseTitle, courseId } = req.body;
+    const {courseJson,courseTitle,courseId}=await req.body;
+    const promises = courseJson?.course?.chapters?.map(async(chapter)=>{
+        const tools = [
+            {
+            googleSearch: {
+            }
+            },
+        ];
+        const config = {
+            thinkingConfig: {
+            thinkingBudget: -1,
+            },
+            tools,
+            responseMimeType: 'text/plain',
+        };  
+        const model = 'gemini-2.5-pro';
+        const contents = [
+            {
+            role: 'user',
+            parts: [
+                {
+                text: PROMPT + JSON.stringify(chapter),
+                },
+            ],
+            },
+        ];
 
-    const promises = courseJson?.chapters?.map(async (chapter) => {
-      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-
-      const result = await model.generateContent(PROMPT + JSON.stringify(chapter));
-      const raw = result?.response?.text();
-
-      // Parse Gemini Response
-      const RawJson = raw
-        .replace(/^```json\s*/i, "")
-        .replace(/```$/, "")
+        const response = await ai.models.generateContent({
+            model,
+            config,
+            contents,
+        });
+        //console.log(response.candidates[0].content.parts[0].text);
+        const RawResp = response?.candidates[0]?.content?.parts[0]?.text || "";
+        const RawJson = RawResp
+        .replace(/^```json\s*/i, '')
+        .replace(/```$/, '')
         .trim();
 
-      let JSONResp = null;
-      try {
+        let JSONResp;
+        try {
         JSONResp = JSON.parse(RawJson);
-      } catch (err) {
+        } catch (err) {
         console.error("❌ JSON parse error:", err);
         console.error("🚫 Raw content:", RawJson);
-      }
+        JSONResp = null;
+        }
 
-      // Get YouTube Videos for the chapter
+
       const youtubeVideos = await getYouTubeVideos(chapter.chapterName);
 
       return {
@@ -56,23 +79,21 @@ exports.generateCourseContent = async (req, res) => {
 
     const CourseContent = await Promise.all(promises);
 
-    // Update course in MongoDB
-    await Course.findOneAndUpdate({ cid: courseId }, {
-      courseContent: CourseContent,
-    });
+    await Course.findOneAndUpdate(
+      { cid: courseId },
+      { courseContent: CourseContent }
+    );
 
     res.json({
       courseName: courseTitle,
       CourseContent,
     });
-
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Failed to generate course content" });
   }
 };
 
-// 🔍 Get YouTube Videos
 const getYouTubeVideos = async (topic) => {
   const params = {
     part: "snippet",
@@ -82,9 +103,17 @@ const getYouTubeVideos = async (topic) => {
     key: process.env.YOUTUBE_API_KEY,
   };
 
-  const resp = await axios.get("https://www.googleapis.com/youtube/v3/search", { params });
-  return resp.data.items.map((item) => ({
-    videoId: item.id.videoId,
-    title: item.snippet.title,
-  }));
+  try {
+    const resp = await axios.get("https://www.googleapis.com/youtube/v3/search", {
+      params,
+    });
+
+    return resp.data.items.map((item) => ({
+      videoId: item.id?.videoId,
+      title: item.snippet?.title,
+    }));
+  } catch (err) {
+    console.error("YouTube API Error:", err);
+    return [];
+  }
 };

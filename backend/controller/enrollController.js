@@ -1,8 +1,7 @@
-const EnrollCourse = require("../models/EnrollCourse");
-const Course = require("../models/Course");
-
+import EnrollCourse from "./../models/EnrollCourse.js";
+import Course from "./../models/Course.js";
 // ✅ POST - Enroll in a course
-exports.enrollCourse = async (req, res) => {
+export const enrollCourse = async (req, res) => {
   try {
     const { courseId } = req.body;
     const userId = req.user.id;
@@ -26,7 +25,7 @@ exports.enrollCourse = async (req, res) => {
 };
 
 // ✅ GET - Fetch enrolled courses OR single enrolled course
-exports.getEnrolledCourses = async (req, res) => {
+export const getEnrolledCourses = async (req, res) => {
   try {
     const userId = req.user.id;
     const courseId = req.query.courseId;
@@ -54,7 +53,7 @@ exports.getEnrolledCourses = async (req, res) => {
 };
 
 // ✅ PUT - Update completed chapters
-exports.updateCompletedChapters = async (req, res) => {
+export const updateCompletedChapters = async (req, res) => {
   try {
     const { completedChapter, courseId } = req.body;
     const userId = req.user.id;

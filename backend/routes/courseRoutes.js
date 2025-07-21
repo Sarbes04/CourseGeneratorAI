@@ -1,9 +1,9 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const { getCourses } = require("../controllers/courseController");
-const auth = require("../middleware/auth");
+import { getCourses } from "./../controller/courseController.js"
+import {auth} from "./../middleware/auth.js" 
 
 // ✅ GET /api/courses
 router.get("/", auth, getCourses);
 
-module.exports = router;
+export default router;

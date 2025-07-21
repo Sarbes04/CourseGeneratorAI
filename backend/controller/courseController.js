@@ -1,7 +1,6 @@
-const Course = require("../models/Course");
-
+import Course from "./../models/Course.js"
 // ✅ GET Courses
-exports.getCourses = async (req, res) => {
+export const getCourses = async (req, res) => {
   try {
     const courseId = req.query.coursesId;
     const userId = req.user.id; // coming from JWT middleware

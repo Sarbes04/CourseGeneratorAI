@@ -1,9 +1,9 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const { generateCourseContent } = require("../controllers/contentController");
-const auth = require("../middleware/auth");
+import { generateCourseContent } from './../controller/contentController.js';
+import {auth} from "./../middleware/auth.js"
 
 // ✅ POST /api/content/generate
 router.post("/generate", auth, generateCourseContent);
 
-module.exports = router;
+export default router;

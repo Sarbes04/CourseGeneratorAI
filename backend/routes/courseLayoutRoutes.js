@@ -1,9 +1,8 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const { generateCourseLayout } = require("../controllers/courseLayoutController");
-const auth = require("../middleware/auth");
-
+import {generateCourseLayout} from './../controller/courseLayoutController.js';
+import {auth} from './../middleware/auth.js'
 // ✅ POST - Generate course layout
 router.post("/generate", auth, generateCourseLayout);
 
-module.exports = router;
+export default router;

@@ -1,12 +1,21 @@
-const Course = require("../models/Course");
-const axios = require("axios");
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+import Course from "./../models/Course.js";
+import dotenv from "dotenv";
+import axios from "axios";
+import { GoogleGenAI } from "@google/genai";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+dotenv.config();
 
-const PROMPT = `Genrate Learning Course depends on following details. In which Make sure to add Course Name, Description, Course Banner Image Prompt (Create a modern, flat-style 2D digital illustration representing user Topic. Include UI/UX elements such as mockup screens, text blocks, icons, buttons, and creative workspace tools. Add symbolic elements related to user Course, like sticky notes, design components, and visual aids. Use a vibrant color palette (blues, purples, oranges) with a clean, professional look. The illustration should feel creative, tech-savvy, and educational, ideal for visualizing concepts in user Course) for Course Banner in 3d format Chapter Name, Topic under each chapters, Duration for each chapters etc, in JSON format only.
+export const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY,
+});
 
-Schema:
+const PROMPT = `Generate Learning Course based on the following details. Include:
+- Course Name, Description, Category, Level
+- Course Banner Image Prompt: (Create a modern, flat-style 2D digital illustration representing user topic. Include UI/UX elements such as mockup screens, text blocks, icons, buttons, and creative workspace tools. Add symbolic elements related to user Course, like sticky notes, design components, and visual aids. Use a vibrant color palette (blues, purples, oranges) with a clean, professional look. The illustration should feel creative, tech-savvy, and educational, ideal for visualizing concepts in user Course)
+- Number of chapters, each with name, duration, and topics.
+
+Return a JSON object in this schema:
+
 {
   "course": {
     "name": "string",
@@ -26,34 +35,53 @@ Schema:
   }
 }
 
-, User Input:
+User Input:
 `;
 
-exports.generateCourseLayout = async (req, res) => {
+export const generateCourseLayout = async (req, res) => {
   try {
     const { courseId, ...formData } = req.body;
-    const userId = req.user.id; // From JWT auth
+    const userId = req.user.id;
 
-    // ✅ Check free-plan course creation limit (1 course max for non-premium)
     const userCourses = await Course.find({ user: userId });
-    if (!req.user.isPremium && userCourses.length >= 1) {
-      return res.status(403).json({ resp: "limit exceed" });
-    }
 
-    // ✅ Call Gemini to generate course layout
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-    const result = await model.generateContent(PROMPT + JSON.stringify(formData));
-    const raw = result?.response?.text();
+    // Optional limit logic
+    // if (!req.user.isPremium && userCourses.length >= 1) {
+    //   return res.status(403).json({ resp: "limit exceed" });
+    // }
 
-    const RawJson = raw.replace("```json", "").replace("```", "").trim();
-    const JSONResp = JSON.parse(RawJson);
+    const model = "gemini-2.5-pro";
+    const tools = [{ googleSearch: {} }];
+    const config = {
+      thinkingConfig: { thinkingBudget: -1 },
+      tools,
+      responseMimeType: "text/plain",
+    };
+
+    const contents = [
+      {
+        role: "user",
+        parts: [
+          {
+            text: PROMPT + JSON.stringify(formData),
+          },
+        ],
+      },
+    ];
+
+    const response = await ai.models.generateContent({
+      model,
+      config,
+      contents,
+    });
+
+    const rawText = response?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+    const rawJson = rawText.replace("```json", "").replace("```", "").trim();
+    const JSONResp = JSON.parse(rawJson);
 
     const imagePrompt = JSONResp.course?.bannerImagePrompt;
-
-    // ✅ Generate banner image
     const bannerImageUrl = await generateImage(imagePrompt);
 
-    // ✅ Save to DB
     const newCourse = await Course.create({
       ...formData,
       courseJson: JSONResp,
@@ -65,11 +93,14 @@ exports.generateCourseLayout = async (req, res) => {
     res.status(201).json({ courseId: newCourse.cid });
   } catch (error) {
     console.error("❌ Error generating course layout:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({
+      message: "Server error",
+      error: error.message,
+      stack: error.stack,
+    });
   }
 };
 
-// ✅ Helper - Generate Banner Image using Aigurulab API
 const generateImage = async (imagePrompt) => {
   try {
     const BASE_URL = "https://aigurulab.tech";
@@ -90,9 +121,9 @@ const generateImage = async (imagePrompt) => {
       }
     );
 
-    return response.data.image; // Base64 Image
+    return response.data.image;
   } catch (err) {
-    console.error("❌ Error generating image:", err);
+    console.error("❌ Error generating image:", err.message);
     return "";
   }
 };
