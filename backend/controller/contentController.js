@@ -21,7 +21,8 @@ Schema:{
 export const generateCourseContent = async (req, res) => {
   try {
     const {courseJson,courseTitle,courseId}=await req.body;
-    const promises = courseJson?.course?.chapters?.map(async(chapter)=>{
+    console.log(courseJson,courseTitle,courseId)
+    const promises = courseJson?.chapters?.map(async(chapter)=>{
         const tools = [
             {
             googleSearch: {

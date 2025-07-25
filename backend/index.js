@@ -11,11 +11,17 @@ import generateCourseLayoutRoutes from './routes/courseLayoutRoutes.js';
 import enrollRoutes from './routes/enrollRoutes.js';
 
 
+
+
+
 // Load .env variables
 dotenv.config();
 
+
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+
 
 const _dirname = path.resolve();
 

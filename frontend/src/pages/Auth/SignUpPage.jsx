@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import axios from "../../config/axiosConfig";
 import { useNavigate } from "react-router-dom";
-import { useContext } from "react";
 import { UserDetailContext } from "../../context/UserDetailContext";
 
 function SignUpPage() {
@@ -22,21 +21,21 @@ function SignUpPage() {
     setLoading(true);
 
     try {
-      const res = await axios.post("/auth/signup", formData);
+      // ✅ 1. First, create the account
+      const res = await axios.post("/api/auth/signup", formData);
       alert(res.data.message || "Account created successfully");
 
-      // ✅ Auto-login after signup (optional)
-      const loginRes = await axios.post("/auth/login", {
+      // ✅ 2. Auto-login after successful signup
+      const loginRes = await axios.post("/api/auth/login", {
         email: formData.email,
         password: formData.password,
       });
 
       localStorage.setItem("token", loginRes.data.token);
       localStorage.setItem("user", JSON.stringify(loginRes.data.user));
-
       setUser(loginRes.data.user);
 
-      navigate("/"); // ✅ Redirect to home after signup
+      navigate("/"); // ✅ Redirect to home after login
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong");
     } finally {
@@ -82,6 +81,13 @@ function SignUpPage() {
           disabled={loading}
         >
           {loading ? "Signing Up..." : "Sign Up"}
+        </button>
+        <button
+          
+          className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+          onClick={() => navigate("/sign-in")}
+        >
+          SignIn Here
         </button>
       </form>
     </div>

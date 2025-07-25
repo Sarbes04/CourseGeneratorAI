@@ -1,42 +1,51 @@
-import React, { useEffect, useState, useContext } from "react";
-import axios from "../../config/axiosConfig"; // ✅ Use configured axios
+import React, { useEffect, useState } from "react";
+import axios from "../../config/axiosConfig";
 import EnrolledCourseCard from "../../components/shared/EnrollCourseCard";
-import { UserDetailContext } from "../../context/UserDetailContext";
 
 function EnrollCourseList() {
   const [enrolledCourseList, setEnrolledCourseList] = useState([]);
-  const { user } = useContext(UserDetailContext);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    if (user) {
-      GetEnrolledCourse();
-    }
-  }, [user]);
+    GetEnrolledCourse();
+  }, []);
 
   const GetEnrolledCourse = async () => {
+    setLoading(true);
+    setError("");
     try {
-      const result = await axios.get("/api/enroll-course", {
-        params: { userId: user._id }, // ✅ userId automatically sent
-      });
+      const result = await axios.get("/api/enroll"); // ✅ Token automatically attached
       setEnrolledCourseList(result.data);
     } catch (error) {
       console.error("Error fetching enrolled courses:", error);
+      setError("Failed to load enrolled courses.");
+    } finally {
+      setLoading(false);
     }
   };
 
+  if (loading) {
+    return <p className="text-center mt-4">Loading enrolled courses...</p>;
+  }
+
+  if (error) {
+    return <p className="text-red-500 text-center mt-4">{error}</p>;
+  }
+
   if (!enrolledCourseList || enrolledCourseList.length === 0) {
-    return null; // ✅ Don't render if no courses
+    return null; // ✅ Nothing to show
   }
 
   return (
     <div className="mt-3">
       <h2 className="font-bold text-xl">Continue Learning your courses</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-5 mt-4">
-        {enrolledCourseList.map((course) => (
+        {enrolledCourseList.map((item) => (
           <EnrolledCourseCard
-            enrollCourse={course?.enrollCourse}
-            course={course?.courses}
-            key={course?._id || course?.courses?._id} // ✅ Better unique key
+            key={item?.enrollCourse?._id || item?.courses?._id}
+            enrollCourse={item.enrollCourse}
+            course={item.courses}
           />
         ))}
       </div>

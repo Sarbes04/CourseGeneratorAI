@@ -1,11 +1,15 @@
 import React, { useEffect, useState, useContext } from "react";
-import axios from "../../config/axiosConfig"; // ✅ Use configured axios
+import axios from "../../config/axiosConfig";
 import CourseCard from "../../components/shared/CourseCard";
 import { UserDetailContext } from "../../context/UserDetailContext";
+import AddNewCourseDialog from "../../components/shared/AddNewCourseDialog"; 
 
 function CourseList() {
   const [courseList, setCourseList] = useState([]);
   const { user } = useContext(UserDetailContext);
+
+  // ✅ State for dialog
+  const [openDialog, setOpenDialog] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -38,17 +42,28 @@ function CourseList() {
           <h2 className="my-2 text-xl font-bold">
             Looks like you haven't created any courses yet
           </h2>
-          <button className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+
+          {/* ✅ Normal button opens dialog */}
+          <button
+            className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            onClick={() => setOpenDialog(true)}
+          >
             + Create your first course
           </button>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-5 mt-4">
           {courseList.map((course) => (
-            <CourseCard course={course} key={course?._id} /> 
+            <CourseCard course={course} key={course?._id} />
           ))}
         </div>
       )}
+
+      {/* ✅ Global full-screen dialog */}
+      <AddNewCourseDialog
+        isOpen={openDialog}
+        onClose={() => setOpenDialog(false)}
+      />
     </div>
   );
 }
