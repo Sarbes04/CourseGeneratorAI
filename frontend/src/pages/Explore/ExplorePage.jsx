@@ -32,7 +32,7 @@ function ExplorePage() {
   const filteredCourses = courseList.filter((course) =>
     course.name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
+  console.log(courseList);
   return (
     <div className="mt-10 p-4">
       <h2 className="font-bold text-3xl mb-6">Explore More Courses</h2>

@@ -35,7 +35,7 @@ function AppHeader({ hideSidebar = false }) {
         <nav className="flex gap-4 items-center">
           {user ? (
             <>
-              <Link to="/profile" className="hover:underline">
+              <Link to="/workspace/profile" className="hover:underline">
                 Profile
               </Link>
               <Link to="/workspace" className="hover:underline">

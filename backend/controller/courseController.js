@@ -2,12 +2,14 @@ import Course from "./../models/Course.js"
 // ✅ GET Courses
 export const getCourses = async (req, res) => {
   try {
-    const courseId = req.query.coursesId;
-    const userId = req.user.id; // coming from JWT middleware
+    console.log(req);
+    const courseId = req.query.courseId;
+    const userId = req.user.id;
+    console.log(courseId); // coming from JWT middleware
 
     // 1️⃣ Show only courses with generated content
     if (courseId == 0) {
-      const courses = await Course.find({ courseContent: { $ne: [] } }); 
+      const courses = await Course.find({ }); 
       return res.json(courses);
     }
 

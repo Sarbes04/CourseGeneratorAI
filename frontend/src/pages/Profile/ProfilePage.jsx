@@ -34,6 +34,9 @@ function Profile() {
     setLoading(true);
 
     try {
+
+      if(!confirm("After Updating The Changes You Have To Login With New Credentials"))return 
+
       const res = await axios.put(`/api/auth/update`, formData);
       setUser(res.data.user); // update context user data
       setSuccessMsg("Profile updated successfully!");
