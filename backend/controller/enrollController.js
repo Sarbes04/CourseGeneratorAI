@@ -29,14 +29,14 @@ export const getEnrolledCourses = async (req, res) => {
   try {
     const userId = req.user.id;
     const courseId = req.query.courseId;
-
+    console.log(courseId, "in enroll route");
     if (courseId) {
       // Single course enrollment details with course info (JOIN equivalent)
-      const enrolled = await EnrollCourse.findOne({ course: courseId, user: userId })
+      const enrolled = await EnrollCourse.findOne({ _id: courseId, user: userId })
         .populate("course");
 
       if (!enrolled) return res.status(404).json({ message: "Not enrolled" });
-
+      console.log(enrolled, "enrolled");
       return res.json(enrolled);
     }
 
@@ -59,7 +59,7 @@ export const updateCompletedChapters = async (req, res) => {
     const userId = req.user.id;
 
     const updated = await EnrollCourse.findOneAndUpdate(
-      { course: courseId, user: userId },
+      { _id: courseId, user: userId },
       { completedChapters: completedChapter },
       { new: true }
     );

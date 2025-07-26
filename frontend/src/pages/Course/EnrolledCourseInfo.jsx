@@ -12,8 +12,8 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import axiosInstance from "../../config/axiosConfig"; // ✅ Using axiosInstance
 
-function CourseInfo({ course, viewCourse=false }) {
-  const courseLayout = course?.courseJson?.course;
+function EnrolledCourseInfo({ course, viewCourse=true }) {
+  const courseLayout = course?.course?.courseJson?.course;
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -100,9 +100,9 @@ function CourseInfo({ course, viewCourse=false }) {
         )}
       </div>
 
-      {course?.bannerImageUrl && (
+      {course?.course?.bannerImageUrl && (
         <img
-          src={course.bannerImageUrl}
+          src={course?.course?.bannerImageUrl}
           alt="Banner"
           className="w-full mt-5 md:mt-0 object-cover aspect-auto h-[240px] rounded-2xl"
         />
@@ -111,4 +111,4 @@ function CourseInfo({ course, viewCourse=false }) {
   );
 }
 
-export default CourseInfo;
+export default EnrolledCourseInfo;

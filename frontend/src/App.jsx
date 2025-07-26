@@ -16,11 +16,12 @@ import ExplorePage from "./pages/Explore/ExplorePage";
 import ProfilePage from "./pages/Profile/ProfilePage";
 import BillingPage from "./pages/Billing/BillingPage";
 import WorkspacePage from "./pages/Workspace/WorkspacePage";
+import View from "./pages/Course/View";
 
 function App() {
   const { user } = useContext(UserDetailContext);
 
-  // ✅ Protected Route
+  // ✅ Redirect non-logged-in users from protected pages
   const ProtectedRoute = ({ children }) => {
     if (!user) {
       return <Navigate to="/sign-in" replace />;
@@ -28,18 +29,40 @@ function App() {
     return children;
   };
 
+  // ✅ Redirect logged-in users away from sign-in/up
+  const PublicOnlyRoute = ({ children }) => {
+    if (user) {
+      return <Navigate to="/" replace />;
+    }
+    return children;
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">
-      {/* ✅ Show Navbar only if logged in */}
+      {/* Show AppHeader only when user is logged in */}
       {user && <AppHeader />}
 
       <Routes>
-        {/* ✅ Public Routes */}
+        {/* Public Routes */}
         <Route path="/" element={<HomePage />} />
-        <Route path="/sign-in" element={<SignInPage />} />
-        <Route path="/sign-up" element={<SignUpPage />} />
+        <Route
+          path="/sign-in"
+          element={
+            <PublicOnlyRoute>
+              <SignInPage />
+            </PublicOnlyRoute>
+          }
+        />
+        <Route
+          path="/sign-up"
+          element={
+            <PublicOnlyRoute>
+              <SignUpPage />
+            </PublicOnlyRoute>
+          }
+        />
 
-        {/* ✅ Course Routes */}
+        {/* Protected Course Routes */}
         <Route
           path="/course/:id"
           element={
@@ -57,7 +80,7 @@ function App() {
           }
         />
 
-        {/* ✅ Workspace & Sidebar Routes */}
+        {/* Workspace and Sidebar Pages */}
         <Route
           path="/workspace"
           element={
@@ -71,6 +94,22 @@ function App() {
           element={
             <ProtectedRoute>
               <EditCoursePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/workspace/view-course/:id"
+          element={
+            <ProtectedRoute>
+              <ViewCoursePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/workspace/view/:id"
+          element={
+            <ProtectedRoute>
+              <View />
             </ProtectedRoute>
           }
         />

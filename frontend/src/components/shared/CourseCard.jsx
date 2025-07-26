@@ -7,14 +7,16 @@ import { toast } from "sonner";
 function CourseCard({ course }) {
   const courseJson = course?.courseJson?.course;
   const [loading, setLoading] = useState(false);
-
+  //console.log(course);
   const onEnrollCourse = async () => {
     try {
       setLoading(true);
-      const result = await axios.post("/api/enroll-course", {
-        courseId: course?.cid,
+      console.log(course?.cid);
+      setLoading(true);
+      const result = await axios.post("/api/enroll", {
+        courseId: course?._id,
       });
-
+      setLoading(false);
       if (result.data.resp) {
         toast.warning("Already Enrolled");
       } else {

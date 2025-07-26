@@ -24,7 +24,7 @@ function EnrollCourseList() {
       setLoading(false);
     }
   };
-
+  console.log(enrolledCourseList,"enrolledCourseList");
   if (loading) {
     return <p className="text-center mt-4">Loading enrolled courses...</p>;
   }
@@ -36,6 +36,7 @@ function EnrollCourseList() {
   if (!enrolledCourseList || enrolledCourseList.length === 0) {
     return null; // ✅ Nothing to show
   }
+  console.log(enrolledCourseList);
 
   return (
     <div className="mt-3">
@@ -43,9 +44,10 @@ function EnrollCourseList() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-5 mt-4">
         {enrolledCourseList.map((item) => (
           <EnrolledCourseCard
-            key={item?.enrollCourse?._id || item?.courses?._id}
-            enrollCourse={item.enrollCourse}
-            course={item.courses}
+            key={item?.course?.cid || item?.courses?._id}
+            enrollId={item?._id}
+            enrollCourse={item}
+            course={item.course}
           />
         ))}
       </div>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
-import axios from "../../config/axiosConfig"; // your axios with baseURL
+import { useNavigate } from "react-router-dom"; // ✅ Correct import
+import axios from "../../config/axiosConfig"; // your axios instance with baseURL
 import { UserDetailContext } from "../../context/UserDetailContext";
 
 function Profile() {
@@ -11,6 +12,7 @@ function Profile() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+  const navigate = useNavigate(); // ✅ Correct usage
 
   useEffect(() => {
     if (user) {
@@ -32,9 +34,11 @@ function Profile() {
     setLoading(true);
 
     try {
-      const res = await axios.put(`/api/users/${user._id}`, formData);
+      const res = await axios.put(`/api/auth/update`, formData);
       setUser(res.data.user); // update context user data
       setSuccessMsg("Profile updated successfully!");
+
+      navigate("/"); // ✅ Fixed: lowercase 'navigate'
     } catch (err) {
       setError(err.response?.data?.message || "Failed to update profile");
     } finally {

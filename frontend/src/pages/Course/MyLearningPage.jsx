@@ -1,8 +1,8 @@
 import React from 'react'
-
+import  EnrolledCourseList from "../../components/shared/EnrollCourseList"
 function MyLearningPage() {
   return (
-    <div>MyLearningPage</div>
+    <EnrolledCourseList/>
   )
 }
 

@@ -4,7 +4,7 @@ import axiosInstance from "../../config/axiosConfig";
 import CourseInfo from "./CourseInfo";
 import ChapterTopicList from "./ChapterTopicList";
 
-function EditCoursePage() {
+function EditCoursePage({viewCourse = false}) {
   const { id } = useParams(); // ✅ Always "id" now
   const [loading, setLoading] = useState(false);
   const [course, setCourse] = useState(null);
@@ -24,7 +24,6 @@ function EditCoursePage() {
       setLoading(false);
     }
   };
-
   useEffect(() => {
     fetchCourse();
   }, [id]);
