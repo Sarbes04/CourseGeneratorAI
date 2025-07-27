@@ -20,7 +20,7 @@ const _dirname = path.resolve();
 
 const corsOptions = {
     //allows the end domain to access the server's resources
-    origin:true,
+    origin:"https://coursegeneratorai.onrender.com/",
     credentials:true
 }
 
