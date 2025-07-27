@@ -7,13 +7,13 @@ import {
 } from "./../controller/enrollController.js";
 import {auth} from "./../middleware/auth.js";
 
-// ✅ POST - Enroll in a course
+//Enroll in a course
 router.post("/", auth, enrollCourse);
 
-// ✅ GET - Get enrolled courses or a single enrolled course
+//  Get enrolled courses or a single enrolled course
 router.get("/", auth, getEnrolledCourses);
 
-// ✅ PUT - Update completed chapters
+// Update completed chapters
 router.put("/", auth, updateCompletedChapters);
 
 export default router;

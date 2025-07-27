@@ -1,29 +1,26 @@
 import React, { useState } from "react";
 import { Book, LoaderCircle, PlayCircle, Settings } from "lucide-react";
 import { Link } from "react-router-dom";
-import axios from "../../config/axiosConfig"; // ✅ use axiosConfig
-import { toast } from "sonner";
+import axios from "../../config/axiosConfig";
+import { toast } from "react-hot-toast";
 
 function CourseCard({ course }) {
   const courseJson = course?.courseJson?.course;
   const [loading, setLoading] = useState(false);
-  //console.log(course);
+
   const onEnrollCourse = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      console.log(course?.cid);
-      setLoading(true);
       const result = await axios.post("/api/enroll", {
         courseId: course?._id,
       });
-      setLoading(false);
       if (result.data.resp) {
-        toast.warning("Already Enrolled");
+        toast("Already enrolled in this course", { icon: "⚠️" });
       } else {
-        toast.success("Enrolled!");
+        toast.success("Enrolled successfully!");
       }
     } catch (e) {
-      toast.error("Server side error");
+      toast.error("Failed to enroll in course");
     } finally {
       setLoading(false);
     }
@@ -31,7 +28,6 @@ function CourseCard({ course }) {
 
   return (
     <div className="shadow rounded-xl">
-      {/* ✅ Replaced Next.js Image with normal img */}
       <img
         src={course?.bannerImageUrl}
         alt={course?.name}
@@ -54,7 +50,9 @@ function CourseCard({ course }) {
             <button
               onClick={onEnrollCourse}
               disabled={loading}
-              className="flex items-center gap-1 bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-sm"
+              className={`flex items-center gap-1 bg-blue-600 text-white px-3 py-1 rounded text-sm transition hover:bg-blue-700 ${
+                loading ? "opacity-70 cursor-not-allowed" : ""
+              }`}
             >
               {loading ? (
                 <LoaderCircle className="animate-spin w-4 h-4" />

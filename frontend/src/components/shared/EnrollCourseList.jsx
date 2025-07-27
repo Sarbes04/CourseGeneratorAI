@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "../../config/axiosConfig";
 import EnrolledCourseCard from "../../components/shared/EnrollCourseCard";
+import { toast } from "react-hot-toast";
 
 function EnrollCourseList() {
   const [enrolledCourseList, setEnrolledCourseList] = useState([]);
@@ -15,18 +16,24 @@ function EnrollCourseList() {
     setLoading(true);
     setError("");
     try {
-      const result = await axios.get("/api/enroll"); // ✅ Token automatically attached
+      const result = await axios.get("/api/enroll");
       setEnrolledCourseList(result.data);
     } catch (error) {
       console.error("Error fetching enrolled courses:", error);
+      toast.error("Failed to load enrolled courses.");
       setError("Failed to load enrolled courses.");
     } finally {
       setLoading(false);
     }
   };
-  console.log(enrolledCourseList,"enrolledCourseList");
+
   if (loading) {
-    return <p className="text-center mt-4">Loading enrolled courses...</p>;
+    return (
+      <div className="flex justify-center items-center mt-6">
+        <span className="w-6 h-6 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></span>
+        <span className="ml-2 text-blue-600 font-medium">Loading enrolled courses...</span>
+      </div>
+    );
   }
 
   if (error) {
@@ -34,9 +41,8 @@ function EnrollCourseList() {
   }
 
   if (!enrolledCourseList || enrolledCourseList.length === 0) {
-    return null; // ✅ Nothing to show
+    return null;
   }
-  console.log(enrolledCourseList);
 
   return (
     <div className="mt-3">

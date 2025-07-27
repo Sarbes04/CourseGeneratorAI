@@ -14,7 +14,6 @@ import enrollRoutes from './routes/enrollRoutes.js';
 
 
 
-// Load .env variables
 dotenv.config();
 
 
@@ -44,7 +43,7 @@ const connectDB = async()=>{
         console.log(error);
     }
 }
-// ✅ Middlewares
+//  Middlewares
 app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use(express.json({ limit: "10mb" })); // For large base64 images
@@ -55,13 +54,13 @@ app.use("/api/enroll", enrollRoutes); // enroll course, get enrolled, update pro
 app.use("/api/generate-course", generateCourseRoutes); // AI course generation
 app.use("/api/generate-course-layout", generateCourseLayoutRoutes); // AI layout + video generation
 
-// ✅ Default Route
+// Default Route
 app.get("/", (req, res) => {
   res.send("✅ Education Platform API running...");
 });
 
-// ✅ Start Server
+// Start Server
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
   connectDB();  
 });

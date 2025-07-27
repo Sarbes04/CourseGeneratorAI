@@ -64,8 +64,8 @@ export const generateCourseContent = async (req, res) => {
         try {
         JSONResp = JSON.parse(RawJson);
         } catch (err) {
-        console.error("❌ JSON parse error:", err);
-        console.error("🚫 Raw content:", RawJson);
+        console.error(" JSON parse error:", err);
+        console.error(" Raw content:", RawJson);
         JSONResp = null;
         }
 

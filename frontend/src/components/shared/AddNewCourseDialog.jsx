@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "../../config/axiosConfig"; // ✅ Correct import
+import axios from "../../config/axiosConfig";
 import { v4 as uuidv4 } from "uuid";
-import { toast } from "sonner";
+import { toast } from "react-hot-toast";
 import { Loader2Icon, Sparkle, X } from "lucide-react";
 
 function AddNewCourseDialog({ isOpen, onClose }) {
@@ -35,34 +35,41 @@ function AddNewCourseDialog({ isOpen, onClose }) {
       });
 
       if (result.data.resp === "limit exceed") {
-        toast.warning("Please subscribe to plan!");
+        toast("Please subscribe to plan!", { icon: "⚠️" });
         navigate("/workspace/billing");
         return;
       }
 
       toast.success("Course Generated!");
+      setFormData({
+        name: "",
+        description: "",
+        includeVideo: false,
+        noOfChapters: 1,
+        category: "",
+        level: "",
+      });
+
       navigate("/workspace/edit-course/" + result.data?.courseId);
     } catch (e) {
       toast.error("Something went wrong!");
-      console.error(e);
     } finally {
       setLoading(false);
       onClose();
     }
   };
 
-  if (!isOpen) return null; // ✅ Don't render unless open
+  if (!isOpen) return null;
 
   return (
     <div
-      className="fixed inset-0 bg-gray-200 bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-[9999]"
+      className="fixed inset-0 bg-gray-900 bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-[9999]"
       onClick={() => !loading && onClose()}
     >
       <div
         className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg relative"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* ✅ Close Button */}
         <button
           onClick={() => !loading && onClose()}
           className="absolute top-3 right-3 p-1 bg-gray-100 rounded hover:bg-gray-200"
@@ -82,20 +89,18 @@ function AddNewCourseDialog({ isOpen, onClose }) {
               type="text"
               className="w-full border rounded p-2"
               placeholder="Course Name"
+              value={formData.name}
               onChange={(e) => onHandleInputChange("name", e.target.value)}
             />
           </div>
 
           <div>
-            <label className="text-sm font-medium">
-              Course Description (optional)
-            </label>
+            <label className="text-sm font-medium">Course Description (optional)</label>
             <textarea
               className="w-full border rounded p-2"
               placeholder="Course Description"
-              onChange={(e) =>
-                onHandleInputChange("description", e.target.value)
-              }
+              value={formData.description}
+              onChange={(e) => onHandleInputChange("description", e.target.value)}
             />
           </div>
 
@@ -105,9 +110,8 @@ function AddNewCourseDialog({ isOpen, onClose }) {
               type="number"
               className="w-full border rounded p-2"
               placeholder="No of chapters"
-              onChange={(e) =>
-                onHandleInputChange("noOfChapters", e.target.value)
-              }
+              value={formData.noOfChapters}
+              onChange={(e) => onHandleInputChange("noOfChapters", e.target.value)}
             />
           </div>
 
@@ -126,6 +130,7 @@ function AddNewCourseDialog({ isOpen, onClose }) {
             <label className="text-sm font-medium">Difficulty Level</label>
             <select
               className="w-full border rounded p-2"
+              value={formData.level}
               onChange={(e) => onHandleInputChange("level", e.target.value)}
             >
               <option value="">Select Level</option>
@@ -141,29 +146,35 @@ function AddNewCourseDialog({ isOpen, onClose }) {
               type="text"
               className="w-full border rounded p-2"
               placeholder="Category (Separated by comma)"
+              value={formData.category}
               onChange={(e) => onHandleInputChange("category", e.target.value)}
             />
           </div>
 
           <div className="flex gap-3 mt-5">
             <button
-              className="flex-1 bg-gray-300 py-2 rounded hover:bg-gray-400"
+              className="flex-1 bg-gray-300 py-2 rounded hover:bg-gray-400 disabled:opacity-70"
               onClick={onClose}
               disabled={loading}
             >
               Cancel
             </button>
             <button
-              className="flex-1 bg-blue-600 text-white py-2 rounded hover:bg-blue-700 flex items-center justify-center gap-2"
+              className="flex-1 bg-blue-600 text-white py-2 rounded hover:bg-blue-700 flex items-center justify-center gap-2 disabled:opacity-70"
               onClick={onGenerate}
               disabled={loading}
             >
               {loading ? (
-                <Loader2Icon className="animate-spin" />
+                <>
+                  <Loader2Icon className="animate-spin h-5 w-5" />
+                  Generating...
+                </>
               ) : (
-                <Sparkle />
+                <>
+                  <Sparkle />
+                  Generate
+                </>
               )}
-              Generate
             </button>
           </div>
         </div>

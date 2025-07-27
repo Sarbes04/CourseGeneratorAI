@@ -92,7 +92,7 @@ export const generateCourseLayout = async (req, res) => {
 
     res.status(201).json({ courseId: newCourse.cid });
   } catch (error) {
-    console.error("❌ Error generating course layout:", error);
+    console.error(" Error generating course layout:", error);
     res.status(500).json({
       message: "Server error",
       error: error.message,
@@ -123,7 +123,7 @@ const generateImage = async (imagePrompt) => {
 
     return response.data.image;
   } catch (err) {
-    console.error("❌ Error generating image:", err.message);
+    console.error(" Error generating image:", err.message);
     return "";
   }
 };

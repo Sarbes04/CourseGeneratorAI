@@ -3,7 +3,7 @@ const router = express.Router();
 import { generateCourseContent } from './../controller/contentController.js';
 import {auth} from "./../middleware/auth.js"
 
-// ✅ POST /api/content/generate
+//api/content/generate
 router.post("/generate", auth, generateCourseContent);
 
 export default router;

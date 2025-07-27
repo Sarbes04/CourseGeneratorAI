@@ -1,18 +1,15 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom"; // ✅ Correct import
-import axios from "../../config/axiosConfig"; // your axios instance with baseURL
+import { useNavigate } from "react-router-dom";
+import axios from "../../config/axiosConfig";
 import { UserDetailContext } from "../../context/UserDetailContext";
+import { toast } from "react-hot-toast";
 
 function Profile() {
   const { user, setUser } = useContext(UserDetailContext);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-  });
+  const [formData, setFormData] = useState({ name: "", email: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [successMsg, setSuccessMsg] = useState("");
-  const navigate = useNavigate(); // ✅ Correct usage
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {
@@ -30,20 +27,25 @@ function Profile() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    setSuccessMsg("");
     setLoading(true);
 
     try {
-
-      if(!confirm("After Updating The Changes You Have To Login With New Credentials"))return 
+      if (!confirm("After Updating The Changes You Have To Login With New Credentials")) return;
 
       const res = await axios.put(`/api/auth/update`, formData);
-      setUser(res.data.user); // update context user data
-      setSuccessMsg("Profile updated successfully!");
+      setUser(res.data.user);
+      toast.success("Profile updated successfully");
 
-      navigate("/"); // ✅ Fixed: lowercase 'navigate'
+      setFormData({ name: "", email: "" });
+
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      setUser(null);
+      navigate("/sign-in");
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to update profile");
+      const message = err.response?.data?.message || "Failed to update profile";
+      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -54,7 +56,6 @@ function Profile() {
       <h2 className="text-2xl font-bold mb-6">Manage Your Profile</h2>
 
       {error && <p className="text-red-500 mb-4">{error}</p>}
-      {successMsg && <p className="text-green-600 mb-4">{successMsg}</p>}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <label className="block">
@@ -84,9 +85,35 @@ function Profile() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
+          className="w-full flex justify-center items-center gap-2 bg-blue-600 text-white p-2 rounded hover:bg-blue-700 disabled:opacity-75"
         >
-          {loading ? "Updating..." : "Update Profile"}
+          {loading ? (
+            <>
+              <svg
+                className="animate-spin h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z"
+                ></path>
+              </svg>
+              Updating...
+            </>
+          ) : (
+            "Update Profile"
+          )}
         </button>
       </form>
     </div>

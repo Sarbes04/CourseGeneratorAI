@@ -3,11 +3,11 @@ import { SelectedChapterIndexContext } from '../../context/SelectedChapterIndexC
 import YouTube from 'react-youtube';
 import { useParams } from 'react-router-dom';
 import axios from '../../config/axiosConfig';
-import { toast } from 'sonner';
+import { toast } from 'react-hot-toast';
 
 function ChapterContent({ courseInfo, refreshData }) {
   const { id } = useParams();
-  const { course} = courseInfo ?? {};
+  const { course } = courseInfo ?? {};
   const courseContent = course?.courseContent ?? [];
 
   const { selectedChapterIndex } = useContext(SelectedChapterIndexContext);
@@ -24,7 +24,7 @@ function ChapterContent({ courseInfo, refreshData }) {
     const updated = [...completedChapters, selectedChapterIndex];
     try {
       await axios.put('/api/enroll', {
-        courseId:id,
+        courseId: id,
         completedChapter: updated,
       });
       refreshData();
@@ -37,10 +37,12 @@ function ChapterContent({ courseInfo, refreshData }) {
 
   const markInCompleteChapter = async () => {
     setLoading(true);
-    const updated = completedChapters.filter((item) => item !== selectedChapterIndex);
+    const updated = completedChapters.filter(
+      (item) => item !== selectedChapterIndex
+    );
     try {
       await axios.put('/api/enroll', {
-        courseId:id,
+        courseId: id,
         completedChapter: updated,
       });
       refreshData();
@@ -55,11 +57,14 @@ function ChapterContent({ courseInfo, refreshData }) {
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">
-          {selectedChapterIndex + 1}. {courseContent?.[selectedChapterIndex]?.courseData?.chapterName}
+          {selectedChapterIndex + 1}.{' '}
+          {courseContent?.[selectedChapterIndex]?.courseData?.chapterName}
         </h2>
         <button
           disabled={loading}
-          onClick={isCompleted ? markInCompleteChapter : markChapterCompleted}
+          onClick={
+            isCompleted ? markInCompleteChapter : markChapterCompleted
+          }
           className={`px-4 py-2 text-sm rounded-md font-medium flex items-center gap-2 transition-all duration-200 ${
             isCompleted
               ? 'border border-gray-500 text-gray-700 hover:bg-gray-200'

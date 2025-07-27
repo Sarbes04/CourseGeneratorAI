@@ -27,9 +27,10 @@ function AppSidebar({ isOpen, onClose }) {
 
   return (
     <>
+      {/* ✅ Fixed overlay - dark transparent instead of white */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-white bg-opacity-40 backdrop-blur-sm z-40"
+          className="fixed inset-0 bg-black bg-opacity-30 z-40"
           onClick={onClose}
         />
       )}
@@ -39,7 +40,10 @@ function AppSidebar({ isOpen, onClose }) {
         ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
         <div className="p-4 border-b flex justify-between items-center">
-          <img src="/logo.svg" alt="logo" className="w-32" />
+          <img src="/Logo.png" alt="logo" className="w-10" />
+          <h2 className="text-lg font-bold text-blue-600">
+            MyLearningApp
+          </h2>
           <button
             onClick={onClose}
             className="p-1 rounded bg-gray-100 hover:bg-gray-200"
@@ -79,7 +83,6 @@ function AppSidebar({ isOpen, onClose }) {
         </nav>
       </aside>
 
-      {/* ✅ Global Full-Screen Dialog */}
       <AddNewCourseDialog
         isOpen={openDialog}
         onClose={() => setOpenDialog(false)}

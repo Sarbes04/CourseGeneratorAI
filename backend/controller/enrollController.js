@@ -1,6 +1,6 @@
 import EnrollCourse from "./../models/EnrollCourse.js";
 import Course from "./../models/Course.js";
-// ✅ POST - Enroll in a course
+
 export const enrollCourse = async (req, res) => {
   try {
     const { courseId } = req.body;
@@ -24,12 +24,12 @@ export const enrollCourse = async (req, res) => {
   }
 };
 
-// ✅ GET - Fetch enrolled courses OR single enrolled course
+// GET - Fetch enrolled courses OR single enrolled course
 export const getEnrolledCourses = async (req, res) => {
   try {
     const userId = req.user.id;
     const courseId = req.query.courseId;
-    console.log(courseId, "in enroll route");
+    
     if (courseId) {
       // Single course enrollment details with course info (JOIN equivalent)
       const enrolled = await EnrollCourse.findOne({ _id: courseId, user: userId })
@@ -52,7 +52,7 @@ export const getEnrolledCourses = async (req, res) => {
   }
 };
 
-// ✅ PUT - Update completed chapters
+// PUT - Update completed chapters
 export const updateCompletedChapters = async (req, res) => {
   try {
     const { completedChapter, courseId } = req.body;

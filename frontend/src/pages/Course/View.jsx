@@ -1,45 +1,53 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import axios from '../../config/axiosConfig'; // Adjust if needed
-import ChapterListSidebar from './ChapterListSidebar';
-import ChapterContent from './ChapterContent';
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import axios from "../../config/axiosConfig";
+import ChapterListSidebar from "./ChapterListSidebar";
+import ChapterContent from "./ChapterContent";
+import { toast } from "react-hot-toast";
 
 function View() {
   const { id } = useParams();
-
   const [courseInfo, setCourseInfo] = useState(null);
-  console.log(id,"in view course route");
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     GetEnrolledCourseById();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const GetEnrolledCourseById = async () => {
+    setLoading(true);
     try {
       const result = await axios.get(`/api/enroll?courseId=${id}`);
       setCourseInfo(result.data);
+      toast.success("Course content loaded");
     } catch (error) {
-      console.error('Error fetching enrolled course:', error);
+      toast.error("Failed to fetch course content");
+      console.error("Error fetching enrolled course:", error);
+    } finally {
+      setLoading(false);
     }
   };
-  console.log(courseInfo,"courseInfo");
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-[50vh]">
+        <span className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full" />
+      </div>
+    );
+  }
 
   return (
-    <div>
-{/*       <AppHeader hideSidebar={true} />*/}      
-      <div className="flex gap-10">
-        {courseInfo && (
-          <>
-            <ChapterListSidebar courseInfo={courseInfo} />
-            <ChapterContent
-              courseInfo={courseInfo}
-              refreshData={()=>GetEnrolledCourseById()}
-            />
-          </>
-        )}
-      </div>
-    </div>
-  );
+  <div className="flex h-screen overflow-hidden">
+    {courseInfo && (
+      <>
+        <ChapterListSidebar courseInfo={courseInfo} />
+        <div className="flex-1 min-w-0 overflow-y-auto">
+          <ChapterContent courseInfo={courseInfo} refreshData={GetEnrolledCourseById} />
+        </div>
+      </>
+    )}
+  </div>
+);
 }
 
 export default View;

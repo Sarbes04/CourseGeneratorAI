@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { UserDetailContext } from "./context/UserDetailContext";
+import { Toaster } from "react-hot-toast"; 
 
 // Components
 import AppHeader from "./components/shared/AppHeader";
@@ -21,7 +22,6 @@ import View from "./pages/Course/View";
 function App() {
   const { user } = useContext(UserDetailContext);
 
-  // ✅ Redirect non-logged-in users from protected pages
   const ProtectedRoute = ({ children }) => {
     if (!user) {
       return <Navigate to="/sign-in" replace />;
@@ -29,7 +29,6 @@ function App() {
     return children;
   };
 
-  // ✅ Redirect logged-in users away from sign-in/up
   const PublicOnlyRoute = ({ children }) => {
     if (user) {
       return <Navigate to="/" replace />;
@@ -39,11 +38,13 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">
-      {/* Show AppHeader only when user is logged in */}
+     
+      <Toaster position="top-right" reverseOrder={false} />
+
       {user && <AppHeader />}
 
       <Routes>
-        {/* Public Routes */}
+      
         <Route path="/" element={<HomePage />} />
         <Route
           path="/sign-in"
@@ -62,7 +63,6 @@ function App() {
           }
         />
 
-        {/* Protected Course Routes */}
         <Route
           path="/course/:id"
           element={
@@ -80,7 +80,6 @@ function App() {
           }
         />
 
-        {/* Workspace and Sidebar Pages */}
         <Route
           path="/workspace"
           element={

@@ -6,7 +6,7 @@ function ChapterTopicList({ course }) {
 
   return (
     <div>
-      <h2 className="font-bold text-3xl mt-10">Chapters & Topics</h2>
+      <h2 className="ml-5 p-5 font-bold text-3xl mt-10">Chapters & Topics</h2>
       <div className="flex flex-col items-center justify-center mt-10">
         {Array.isArray(courseLayout?.chapters) &&
           courseLayout.chapters.map((chapter, chapterIndex) => (
