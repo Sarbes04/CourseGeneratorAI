@@ -56,7 +56,7 @@ app.use("/api/generate-course-layout", generateCourseLayoutRoutes); // AI layout
 
 // Default Route
 app.get("/", (req, res) => {
-  res.send("✅ Education Platform API running...");
+  res.send(" Education Platform API running...");
 });
 
 // Start Server

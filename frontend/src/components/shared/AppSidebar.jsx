@@ -15,7 +15,6 @@ const SideBarOptions = [
   { title: "Dashboard", icon: LayoutDashboard, path: "/workspace" },
   { title: "My Learning", icon: Book, path: "/workspace/my-learning" },
   { title: "Explore Courses", icon: Compass, path: "/workspace/explore" },
-  { title: "AI Tools", icon: PencilRuler, path: "/workspace/ai-tools" },
   { title: "Billing", icon: Wallet, path: "/workspace/billing" },
   { title: "Profile", icon: User, path: "/workspace/profile" },
 ];
@@ -27,7 +26,6 @@ function AppSidebar({ isOpen, onClose }) {
 
   return (
     <>
-      {/* ✅ Fixed overlay - dark transparent instead of white */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-30 z-40"
