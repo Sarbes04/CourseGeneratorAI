@@ -9,18 +9,12 @@ import courseRoutes from './routes/courseRoutes.js';
 import generateCourseRoutes from './routes/contentRoutes.js';
 import generateCourseLayoutRoutes from './routes/courseLayoutRoutes.js';
 import enrollRoutes from './routes/enrollRoutes.js';
-
-
-
-
+import bodyParser from "body-parser";
 
 dotenv.config();
 
-
 const app = express();
 const PORT = process.env.PORT || 5000;
-
-
 
 const _dirname = path.resolve();
 
@@ -45,8 +39,12 @@ const connectDB = async()=>{
 }
 //  Middlewares
 app.use(cookieParser());
+app.use(express.json()); // For large base64 images
+app.use(bodyParser.urlencoded({extended:true}));
+//app.use(urlencoded({extended:true}));
 app.use(cors(corsOptions));
-app.use(express.json({ limit: "10mb" })); // For large base64 images
+
+app.use(express.static(path.join(_dirname,"/frontend/dist")));
 
 app.use("/api/auth", authRoutes); // /signup, /login
 app.use("/api/courses", courseRoutes); // GET all courses, single course
@@ -55,12 +53,18 @@ app.use("/api/generate-course", generateCourseRoutes); // AI course generation
 app.use("/api/generate-course-layout", generateCourseLayoutRoutes); // AI layout + video generation
 
 // Default Route
-app.get("/", (req, res) => {
-  res.send(" Education Platform API running...");
+//console.log("edhenj",_dirname,"eskjhfjshkjfhnvkmubesrnj");
+
+
+//console.log("edhenj",_dirname,"eskjhfjshkjfhnvkmubesrnj");
+
+app.get('/',(_,res)=>{
+    res.sendFile(path.resolve(_dirname,"frontend","dist","index.html"));
 });
+
 
 // Start Server
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on PORT:${PORT}`);
   connectDB();  
 });

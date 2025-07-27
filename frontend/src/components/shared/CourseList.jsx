@@ -48,7 +48,7 @@ function CourseList() {
       {courseList.length === 0 ? (
         <div className="flex p-7 items-center justify-center flex-col border rounded-xl mt-2 bg-gray-100">
           <img
-            src="/online-education-platform.png"
+            src="/Logo.png"
             alt="edu"
             className="w-20 h-20"
           />
