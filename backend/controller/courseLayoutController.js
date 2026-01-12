@@ -50,7 +50,7 @@ export const generateCourseLayout = async (req, res) => {
     //   return res.status(403).json({ resp: "limit exceed" });
     // }
 
-    const model = "gemini-2.5-pro";
+    const model = "gemini-2.5-flash";
     const tools = [{ googleSearch: {} }];
     const config = {
       thinkingConfig: { thinkingBudget: -1 },
