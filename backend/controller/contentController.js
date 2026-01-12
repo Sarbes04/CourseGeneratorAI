@@ -36,7 +36,7 @@ export const generateCourseContent = async (req, res) => {
             tools,
             responseMimeType: 'text/plain',
         };  
-        const model = 'gemini-2.5-pro';
+        const model = 'gemini-2.5-flash';
         const contents = [
             {
             role: 'user',
